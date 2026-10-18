@@ -20,10 +20,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: xu-cheng/latex-action@v3
-        with:
-          root_file: Yoneda-Reconstruction.tex
-          working_directory: docs
+      # The organization allows only GitHub-owned actions, so TeX comes from apt.
+      - name: Install TeX Live
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq --no-install-recommends latexmk texlive-latex-recommended \
+            texlive-latex-extra texlive-pictures texlive-fonts-recommended
+      - name: Build
+        working-directory: docs
+        run: latexmk -pdf -interaction=nonstopmode -halt-on-error Yoneda-Reconstruction.tex
       - name: Commit the PDF
         shell: bash
         run: |
