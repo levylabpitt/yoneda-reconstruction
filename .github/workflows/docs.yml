@@ -1,0 +1,35 @@
+name: docs
+
+# Builds docs/Yoneda-Reconstruction.pdf from its LaTeX source and commits it.
+# Triggered only by changes to the sources, so the PDF commit cannot retrigger it.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "docs/**.tex"
+      - "docs/**.bib"
+      - "docs/fig/**"
+      - ".github/workflows/docs.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  pdf:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: xu-cheng/latex-action@v3
+        with:
+          root_file: Yoneda-Reconstruction.tex
+          working_directory: docs
+      - name: Commit the PDF
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/Yoneda-Reconstruction.pdf
+          if git diff --cached --quiet; then echo "PDF unchanged"; exit 0; fi
+          git commit -m "docs: rebuild Yoneda-Reconstruction.pdf [skip ci]"
+          git push
