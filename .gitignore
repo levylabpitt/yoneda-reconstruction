@@ -1,0 +1,9 @@
+__pycache__/
+__marimo__/
+*.db-wal
+*.db-shm
+*.aux
+*.log
+*.out
+*.bbl
+*.blg
